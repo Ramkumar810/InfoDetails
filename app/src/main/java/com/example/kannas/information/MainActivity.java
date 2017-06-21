@@ -24,8 +24,6 @@ public class MainActivity extends AppCompatActivity
       Userinformation userinformation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         userinformation=new Userinformation();
         userinformation.userIp(getApplicationContext());
         super.onCreate(savedInstanceState);

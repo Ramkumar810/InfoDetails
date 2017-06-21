@@ -29,8 +29,7 @@ import static java.security.AccessController.getContext;
  */
 
 public class Userinformation extends AppCompatActivity {
-    public static String androidDeviceId;
-     Context context;
+
     int deviceStatus;
     String currentBatteryStatus="Battery Info";
     IntentFilter intentfilter;
@@ -49,21 +48,23 @@ public class Userinformation extends AppCompatActivity {
 //Percentage can be calculated for API 16+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             double percentAvail = mi.availMem / (double)mi.totalMem;
+            Log.e("percentAvail",percentAvail+"");
+
         }
         PackageManager manager = context.getPackageManager();
         PackageInfo info = null;
         try {
             info = manager.getPackageInfo(context.getPackageName(), 0);
-            String version = info.versionName;
+            String versionName = info.versionName;
+            Log.e("version",versionName+"");
             int versionNumber=info.versionCode;
-            Log.d("version",versionNumber+"");
+            Log.e("version",versionNumber+"");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
         String  androidDeviceId = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        Log.e("DeviceId",androidDeviceId+"");
         String manufacturer =android.os.Build.MANUFACTURER;
         String model = Build.MODEL;
         int version = Build.VERSION.SDK_INT;
@@ -83,38 +84,27 @@ public class Userinformation extends AppCompatActivity {
     private BroadcastReceiver broadcastreceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-
             deviceStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS,-1);
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             int batteryLevel=(int)(((float)level / (float)scale) * 100.0f);
-
             if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
-                Log.d("name",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
+                Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
             }
-
             if(deviceStatus == BatteryManager.BATTERY_STATUS_DISCHARGING){
-                Log.d("name",currentBatteryStatus+" = Discharging at "+batteryLevel+" %");
+                Log.e("batteryPercentage",currentBatteryStatus+" = Discharging at "+batteryLevel+" %");
             }
-
             if (deviceStatus == BatteryManager.BATTERY_STATUS_FULL){
-                Log.d("name",currentBatteryStatus+"= Battery Full at "+batteryLevel+" %");
-
+                Log.e("batteryPercentage",currentBatteryStatus+"= Battery Full at "+batteryLevel+" %");
             }
-
             if(deviceStatus == BatteryManager.BATTERY_STATUS_UNKNOWN){
-                Log.d("name",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
+                Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
             }
-
-
             if (deviceStatus == BatteryManager.BATTERY_STATUS_NOT_CHARGING){
-                Log.d("name",currentBatteryStatus+" = Not Charging at "+batteryLevel+" %");
+                Log.e("batteryPercentage",currentBatteryStatus+" = Not Charging at "+batteryLevel+" %");
             }
 
         }
     };
-
-
-
 
 }
