@@ -12,11 +12,12 @@ import android.util.Log;
 public class Userinformation extends AppCompatActivity {
     public static String androidDeviceId;
 
-    public String userIp(){
+    public  void userIp(){
         String name1;
         name1 = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
        //
+        Log.d("name",name1+"");
         String manufacturer = Build.MANUFACTURER;
         String model = Build.MODEL;
         int version = Build.VERSION.SDK_INT;
@@ -27,8 +28,7 @@ public class Userinformation extends AppCompatActivity {
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
         );
-        Log.d("name",name1+"");
-        return name1;
+
 
         //name=androidDeviceId;
     }
