@@ -16,16 +16,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.example.deviceinformation.Userinformation;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
       Userinformation userinformation;
+    TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         userinformation=new Userinformation();
         userinformation.userIp(getApplicationContext());
+        String applicationVersion=Userinformation.applicationVersion;
+        String  batteryPercentage= Userinformation.batteryPercentage;
+        String memory=Userinformation.applicationMemoryUsage;
+        String batteryState=Userinformation.batteryState;
+        String deviceName=Userinformation.deviceName;
+        String deviceLanguage=Userinformation.deviceLanguage;
+        String  deviceCountry=Userinformation.deviceCountry;
+        String  deviceId=Userinformation.deviceId;
+        String  deviceModel= Userinformation.deviceModel;
+        String deviceOsVersion=Userinformation.deviceOsVersion;
+        String deviceVersionRelease= Userinformation.deviceVersionRelease;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -38,7 +51,7 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
+         textView=(TextView)findViewById(R.id.text);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -47,7 +60,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+        textView.setText("Application Version : " + applicationVersion + "\n Device OS Version : " + deviceOsVersion + "\n Device Battery Percentage : " + batteryPercentage + "\n Device Battery State : " + batteryState
+        + "\n Device Language : " + deviceLanguage + "\n Device Country : " + deviceCountry + "\n Device UUID : " + deviceId + "\n Application Memory Usage : " + memory + " \n Version Release : " + deviceVersionRelease
+        + " \n Device Name : " + deviceName + "\n Device Type : " + deviceModel);
 
     }
 

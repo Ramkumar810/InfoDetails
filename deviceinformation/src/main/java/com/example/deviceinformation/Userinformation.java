@@ -31,7 +31,6 @@ import static java.security.AccessController.getContext;
 public class Userinformation extends AppCompatActivity {
     public static String applicationMemoryUsage;
     public static String applicationVersion;
-    public static String deviceType;
     public static String batteryPercentage;
     public static String batteryState;
     public static String deviceName;
@@ -111,27 +110,27 @@ public class Userinformation extends AppCompatActivity {
             int batteryLevel=(int)(((float)level / (float)scale) * 100.0f);
             if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
-                batteryPercentage=batteryLevel+" %";
+                batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState="Charging";
             }
             if(deviceStatus == BatteryManager.BATTERY_STATUS_DISCHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Discharging at "+batteryLevel+" %");
-                batteryPercentage=batteryLevel+" %";
+                batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState=" Discharging";
             }
             if (deviceStatus == BatteryManager.BATTERY_STATUS_FULL){
                 Log.e("batteryPercentage",currentBatteryStatus+"= Battery Full at "+batteryLevel+" %");
-                batteryPercentage=batteryLevel+" %";
+                batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState="Battery Full";
             }
             if(deviceStatus == BatteryManager.BATTERY_STATUS_UNKNOWN){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
-                batteryPercentage=batteryLevel+" %";
+                batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState="Charging";
             }
             if (deviceStatus == BatteryManager.BATTERY_STATUS_NOT_CHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Not Charging at "+batteryLevel+" %");
-                batteryPercentage=batteryLevel+" %";
+                batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState="Not Charging";
             }
 
