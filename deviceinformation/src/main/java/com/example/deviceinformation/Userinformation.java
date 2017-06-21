@@ -29,6 +29,18 @@ import static java.security.AccessController.getContext;
  */
 
 public class Userinformation extends AppCompatActivity {
+    public static String applicationMemoryUsage;
+    public static String applicationVersion;
+    public static String deviceType;
+    public static String batteryPercentage;
+    public static String batteryState;
+    public static String deviceName;
+    public static String deviceLanguage;
+    public static String deviceCountry;
+    public static String deviceId;
+    public static String deviceModel;
+    public static String deviceOsVersion;
+    public static String deviceVersionRelease;
 
     int deviceStatus;
     String currentBatteryStatus="Battery Info";
@@ -48,6 +60,7 @@ public class Userinformation extends AppCompatActivity {
 //Percentage can be calculated for API 16+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
             double percentAvail = mi.availMem / (double)mi.totalMem;
+            applicationMemoryUsage= String.valueOf(percentAvail);
             Log.e("percentAvail",percentAvail+"");
 
         }
@@ -56,6 +69,7 @@ public class Userinformation extends AppCompatActivity {
         try {
             info = manager.getPackageInfo(context.getPackageName(), 0);
             String versionName = info.versionName;
+            applicationVersion=versionName;
             Log.e("version",versionName+"");
             int versionNumber=info.versionCode;
             Log.e("version",versionNumber+"");
@@ -64,11 +78,18 @@ public class Userinformation extends AppCompatActivity {
         }
         String  androidDeviceId = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+        deviceId=androidDeviceId;
         Log.e("DeviceId",androidDeviceId+"");
         String manufacturer =android.os.Build.MANUFACTURER;
+        deviceName=manufacturer;
         String model = Build.MODEL;
+        deviceModel=model;
         int version = Build.VERSION.SDK_INT;
+        deviceOsVersion= String.valueOf(version);
         String versionRelease = Build.VERSION.RELEASE;
+        deviceVersionRelease=versionRelease;
+        deviceCountry=Locale.getDefault().getDisplayCountry();
+        deviceLanguage=Locale.getDefault().getDisplayLanguage();
         Log.e("MyActivity", "manufacturer " + manufacturer
                 + " \n model " + model
                 + " \n version " + version
@@ -90,18 +111,28 @@ public class Userinformation extends AppCompatActivity {
             int batteryLevel=(int)(((float)level / (float)scale) * 100.0f);
             if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
+                batteryPercentage=batteryLevel+" %";
+                batteryState="Charging";
             }
             if(deviceStatus == BatteryManager.BATTERY_STATUS_DISCHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Discharging at "+batteryLevel+" %");
+                batteryPercentage=batteryLevel+" %";
+                batteryState=" Discharging";
             }
             if (deviceStatus == BatteryManager.BATTERY_STATUS_FULL){
                 Log.e("batteryPercentage",currentBatteryStatus+"= Battery Full at "+batteryLevel+" %");
+                batteryPercentage=batteryLevel+" %";
+                batteryState="Battery Full";
             }
             if(deviceStatus == BatteryManager.BATTERY_STATUS_UNKNOWN){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
+                batteryPercentage=batteryLevel+" %";
+                batteryState="Charging";
             }
             if (deviceStatus == BatteryManager.BATTERY_STATUS_NOT_CHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Not Charging at "+batteryLevel+" %");
+                batteryPercentage=batteryLevel+" %";
+                batteryState="Not Charging";
             }
 
         }
