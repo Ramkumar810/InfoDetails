@@ -11,10 +11,11 @@ import android.util.Log;
 public class Userinformation extends AppCompatActivity {
     public static String androidDeviceId;
 
-    public  void userIp(String name){
+    public String userIp(String name){
         name = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         Log.d("name",name+"");
+        return name;
         //name=androidDeviceId;
     }
 
