@@ -1,11 +1,15 @@
 package com.example.deviceinformation;
 
+import android.app.ActivityManager;
+import android.app.admin.DevicePolicyManager;
+import android.bluetooth.BluetoothClass;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,81 +22,99 @@ import android.util.Log;
 
 import java.util.Locale;
 
+import static java.security.AccessController.getContext;
+
 /**
  * Created by kannas on 6/21/2017.
  */
 
 public class Userinformation extends AppCompatActivity {
     public static String androidDeviceId;
+     Context context;
+    int deviceStatus;
+    String currentBatteryStatus="Battery Info";
+    IntentFilter intentfilter;
+    public void userIp(Context context){
+      /*  Runtime rt = Runtime.getRuntime();
+        long maxMemory = rt.maxMemory();
+        Log.v("onCreate", "maxMemory:" + Long.toString(maxMemory));*/
+       /* ActivityManager am = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE);
+        int memoryClass = am.getMemoryClass();
+        Log.v("onCreate", "memoryClass:" + Integer.toString(memoryClass));*/
+        ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+        ActivityManager activityManager = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE);
+        activityManager.getMemoryInfo(mi);
+        double availableMegs = mi.availMem / 0x100000L;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        userIp();
-        this.registerReceiver(this.batteryInfoReceiver,	new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-    }
-
-    public void userIp(){
-      /*  String name1;
-       // name1 = Settings.Secure.getString(getApplicationContext().getContentResolver(),
-                Settings.Secure.ANDROID_ID);*/
-       //
-       // Log.d("name",name1+"");
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
-        int version = Build.VERSION.SDK_INT;
-        String versionRelease = Build.VERSION.RELEASE;
-        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        telephonyManager.getDeviceId();
-        PackageInfo pInfo = null;
-        String appVersion="";
+//Percentage can be calculated for API 16+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            double percentAvail = mi.availMem / (double)mi.totalMem;
+        }
+        PackageManager manager = context.getPackageManager();
+        PackageInfo info = null;
         try {
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-             appVersion = pInfo.versionName;
+            info = manager.getPackageInfo(context.getPackageName(), 0);
+            String version = info.versionName;
+            int versionNumber=info.versionCode;
+            Log.d("version",versionNumber+"");
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-
+        String  androidDeviceId = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, ifilter);
+        String manufacturer =android.os.Build.MANUFACTURER;
+        String model = Build.MODEL;
+        int version = Build.VERSION.SDK_INT;
+        String versionRelease = Build.VERSION.RELEASE;
         Log.e("MyActivity", "manufacturer " + manufacturer
                 + " \n model " + model
                 + " \n version " + version
                 + " \n versionRelease " + versionRelease
-                + " \n userDeviceId " +telephonyManager.getDeviceId()
                 + " \n Device Language "+  Locale.getDefault().getDisplayLanguage()
                 + " \n Device Country " + Locale.getDefault().getDisplayCountry()
-                + " \n Application Version "+ appVersion
+
+
         );
-
+        intentfilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        context.registerReceiver(broadcastreceiver,intentfilter);
     }
-
-    private BroadcastReceiver batteryInfoReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver broadcastreceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            int  health= intent.getIntExtra(BatteryManager.EXTRA_HEALTH,0);
-            int  icon_small= intent.getIntExtra(BatteryManager.EXTRA_ICON_SMALL,0);
-            int  level= intent.getIntExtra(BatteryManager.EXTRA_LEVEL,0);
-            int  plugged= intent.getIntExtra(BatteryManager.EXTRA_PLUGGED,0);
-            boolean  present= intent.getExtras().getBoolean(BatteryManager.EXTRA_PRESENT);
-            int  scale= intent.getIntExtra(BatteryManager.EXTRA_SCALE,0);
-            int  status= intent.getIntExtra(BatteryManager.EXTRA_STATUS,0);
-            String  technology= intent.getExtras().getString(BatteryManager.EXTRA_TECHNOLOGY);
-            int  temperature= intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE,0);
-            int  voltage= intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE,0);
-            Log.e("MyActivity", "health " + health
-                    + " \n icon_small " + icon_small
-                    + " \n level " + level
-                    + " \n plugged " + plugged
-                    + "\n scale " + scale
-                    + "\n status " +status
-                    + "\n technology " +technology
-                    + "\n temperature " +temperature
-                    + "\n voltage " +voltage
-                    + " \n present " +present);
+            deviceStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS,-1);
+            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+            int batteryLevel=(int)(((float)level / (float)scale) * 100.0f);
+
+            if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
+                Log.d("name",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
+            }
+
+            if(deviceStatus == BatteryManager.BATTERY_STATUS_DISCHARGING){
+                Log.d("name",currentBatteryStatus+" = Discharging at "+batteryLevel+" %");
+            }
+
+            if (deviceStatus == BatteryManager.BATTERY_STATUS_FULL){
+                Log.d("name",currentBatteryStatus+"= Battery Full at "+batteryLevel+" %");
+
+            }
+
+            if(deviceStatus == BatteryManager.BATTERY_STATUS_UNKNOWN){
+                Log.d("name",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
+            }
 
 
+            if (deviceStatus == BatteryManager.BATTERY_STATUS_NOT_CHARGING){
+                Log.d("name",currentBatteryStatus+" = Not Charging at "+batteryLevel+" %");
+            }
 
         }
     };
+
+
+
 
 }
