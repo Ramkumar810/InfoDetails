@@ -40,12 +40,10 @@ public class Userinformation extends AppCompatActivity {
     public static String deviceModel;
     public static String deviceOsVersion;
     public static String deviceVersionRelease;
-
     int deviceStatus;
-    String currentBatteryStatus="Battery Info";
     IntentFilter intentfilter;
     public void userIp(Context context){
-      /*  Runtime rt = Runtime.getRuntime();
+        /*  Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
         Log.v("onCreate", "maxMemory:" + Long.toString(maxMemory));*/
        /* ActivityManager am = (ActivityManager)context.getSystemService(ACTIVITY_SERVICE);
@@ -98,19 +96,18 @@ public class Userinformation extends AppCompatActivity {
 
 
         );
-        intentfilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        context.registerReceiver(broadcastreceiver,intentfilter);
+
     }
-    private BroadcastReceiver broadcastreceiver = new BroadcastReceiver() {
+   /* public BroadcastReceiver broadcastreceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             deviceStatus = intent.getIntExtra(BatteryManager.EXTRA_STATUS,-1);
             int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
             int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
             int batteryLevel=(int)(((float)level / (float)scale) * 100.0f);
+            batteryPercentage=String.valueOf(batteryLevel + " %");
             if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
                 Log.e("batteryPercentage",currentBatteryStatus+" = Charging at "+batteryLevel+" %");
-                batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState="Charging";
             }
             if(deviceStatus == BatteryManager.BATTERY_STATUS_DISCHARGING){
@@ -133,8 +130,47 @@ public class Userinformation extends AppCompatActivity {
                 batteryPercentage=String.valueOf(batteryLevel + " %");
                 batteryState="Not Charging";
             }
+            //userIp(context);
 
         }
-    };
+    };*/
+    public void userBattery(Context context){
+        int level=0;
+        int scale=0;
+        intentfilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = context.registerReceiver(null, intentfilter);
+        if (batteryStatus != null) {
+            deviceStatus = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS,-1);
+            if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
+                batteryState="Charging";
+            }
+            if(deviceStatus == BatteryManager.BATTERY_STATUS_DISCHARGING){
+                batteryState=" Discharging";
+            }
+            if (deviceStatus == BatteryManager.BATTERY_STATUS_FULL){
+                batteryState="Battery Full";
+            }
+            if(deviceStatus == BatteryManager.BATTERY_STATUS_UNKNOWN){
+                batteryState="Charging";
+            }
+            if (deviceStatus == BatteryManager.BATTERY_STATUS_NOT_CHARGING){
+                batteryState="Not Charging";
+            }
+
+        }
+        if (batteryStatus != null) {
+             level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        }
+        if (batteryStatus != null) {
+             scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+        }
+        int batteryLevel=(int)(((float)level / (float)scale) * 100.0f);
+        batteryPercentage=String.valueOf(batteryLevel + " %");
+
+        //context.registerReceiver(broadcastreceiver,intentfilter);
+        userIp(context);
+
+
+    }
 
 }

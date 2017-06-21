@@ -1,12 +1,16 @@
 package com.example.kannas.information;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,16 +24,20 @@ import android.widget.TextView;
 
 import com.example.deviceinformation.Userinformation;
 
+import static android.R.attr.level;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
       Userinformation userinformation;
     TextView textView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         userinformation=new Userinformation();
-        userinformation.userIp(getApplicationContext());
+        userinformation.userBattery(getApplicationContext());
+       // userinformation.userIp(getApplicationContext());
         String applicationVersion=Userinformation.applicationVersion;
-        String  batteryPercentage= Userinformation.batteryPercentage;
+        //String  batteryPercentage= Userinformation.batteryPercentage;
         String memory=Userinformation.applicationMemoryUsage;
         String batteryState=Userinformation.batteryState;
         String deviceName=Userinformation.deviceName;
@@ -60,9 +68,10 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        textView.setText("Application Version : " + applicationVersion + "\n Device OS Version : " + deviceOsVersion + "\n Device Battery Percentage : " + batteryPercentage + "\n Device Battery State : " + batteryState
+        textView.setText(" Application Version : " + applicationVersion + "\n Device OS Version : " + deviceOsVersion + "\n Device Battery Percentage : " + Userinformation.batteryPercentage + "\n Device Battery State : " + batteryState
         + "\n Device Language : " + deviceLanguage + "\n Device Country : " + deviceCountry + "\n Device UUID : " + deviceId + "\n Application Memory Usage : " + memory + " \n Version Release : " + deviceVersionRelease
         + " \n Device Name : " + deviceName + "\n Device Type : " + deviceModel);
+
 
     }
 
