@@ -26,18 +26,18 @@ import com.example.deviceinformation.Userinformation;
 
 import static android.R.attr.level;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
       Userinformation userinformation;
     TextView textView;
+   public static String deviceIdInfo="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        userinformation=new Userinformation();
-        userinformation.userBattery(getApplicationContext());
-       // userinformation.userIp(getApplicationContext());
+        userinformation=new Userinformation(this);
+        String userinfo=userinformation.getDeviceInformation(deviceIdInfo);
+        Log.d("userInfo",userinfo+"");
         String applicationVersion=Userinformation.applicationVersion;
-        //String  batteryPercentage= Userinformation.batteryPercentage;
         String memory=Userinformation.applicationMemoryUsage;
         String batteryState=Userinformation.batteryState;
         String deviceName=Userinformation.deviceName;

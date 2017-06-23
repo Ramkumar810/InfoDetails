@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.ConnectivityManager;
 import android.os.BatteryManager;
 import android.os.Build;
@@ -20,6 +23,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Locale;
 
 import static java.security.AccessController.getContext;
@@ -39,10 +44,20 @@ public class Userinformation extends AppCompatActivity {
     public static String deviceId;
     public static String deviceModel;
     public static String deviceOsVersion;
+    public static String deviceCity;
     public static String deviceVersionRelease;
     int deviceStatus;
     IntentFilter intentfilter;
+    String deviceIdName;
+    public Context mContext;
+    private static String acccess;
+    public Userinformation(Context context){
+        this.mContext=context;
+        userBattery();
+        isTablet();
+    }
     public void userIp(Context context){
+
         /*  Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
         Log.v("onCreate", "maxMemory:" + Long.toString(maxMemory));*/
@@ -65,6 +80,8 @@ public class Userinformation extends AppCompatActivity {
         PackageInfo info = null;
         try {
             info = manager.getPackageInfo(context.getPackageName(), 0);
+            String packageName=info.packageName;
+            Log.d("packageName",packageName+"");
             String versionName = info.versionName;
             applicationVersion=versionName;
             Log.e("version",versionName+"");
@@ -134,11 +151,11 @@ public class Userinformation extends AppCompatActivity {
 
         }
     };*/
-    public void userBattery(Context context){
+    public void userBattery(){
         int level=0;
         int scale=0;
         intentfilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        Intent batteryStatus = context.registerReceiver(null, intentfilter);
+        Intent batteryStatus = mContext.registerReceiver(null, intentfilter);
         if (batteryStatus != null) {
             deviceStatus = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS,-1);
             if(deviceStatus == BatteryManager.BATTERY_STATUS_CHARGING){
@@ -168,9 +185,29 @@ public class Userinformation extends AppCompatActivity {
         batteryPercentage=String.valueOf(batteryLevel + " %");
 
         //context.registerReceiver(broadcastreceiver,intentfilter);
-        userIp(context);
+        userIp(mContext);
 
 
     }
+    public String getDeviceInformation(String deviceId){
+        //deviceId = Settings.Secure.getString(context.getContentResolver(),
+        deviceId= Settings.Secure.getString(mContext.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        return deviceId;
+    }
+    public boolean isTablet() {
+        boolean xlarge = ((mContext.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == 4);
+        boolean large = ((mContext.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE);
+        return (xlarge || large);
+    }
+    public void crashReport(){
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
+                Log.e("Alert","Lets See if it Works !!!");
+            }
+        });
+    }
+
 
 }
